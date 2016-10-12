@@ -8,4 +8,5 @@ setup(name='Skip Thoughts',
       author='Ryan Kiros',
       url='https://github.com/ryankiros/skip-thoughts',
       packages=['skipthoughts', 'skipthoughts.training','skipthoughts.decoding'],
+      install_requires=['theano','keras','nltk','scikit-learn','gensim','scipy']
      )
