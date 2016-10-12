@@ -17,7 +17,7 @@ from nltk.tokenize import word_tokenize
 
 profile = False
 
-def load_model(path_to_models='./models/'):
+def load_model(path_to_models='./models/', path_to_tables='./models/'):
     """
     Load the model with saved tables
     """
@@ -48,7 +48,7 @@ def load_model(path_to_models='./models/'):
 
     # Tables
     print 'Loading tables...'
-    utable, btable = load_tables()
+    utable, btable = load_tables(path_to_tables)
 
     # Store everything we need in a dictionary
     print 'Packing up...'
@@ -63,7 +63,7 @@ def load_model(path_to_models='./models/'):
     return model
 
 
-def load_tables(path_to_tables = './models/'):
+def load_tables(path_to_tables):
     """
     Load the tables
     """
