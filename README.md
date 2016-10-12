@@ -14,6 +14,10 @@ This code is written in python. To use it you will need:
 * [Keras](https://github.com/fchollet/keras) (for Semantic-Relatedness experiments only)
 * [gensim](https://radimrehurek.com/gensim/) (for vocabulary expansion when training new models)
 
+Or you can navigate to the skip-thoughts folder and run:
+
+    python setup.py install
+
 ## Getting started
 
 You will first need to download the model files and word embeddings. The embedding files (utable and btable) are quite large (>2GB) so make sure there is enough space available. The encoder vocabulary can be found in dictionary.txt.
