@@ -14,6 +14,10 @@ This code is written in python. To use it you will need:
 * [Keras](https://github.com/fchollet/keras) (for Semantic-Relatedness experiments only)
 * [gensim](https://radimrehurek.com/gensim/) (for vocabulary expansion when training new models)
 
+Or you can navigate to the skip-thoughts folder and run:
+
+    python setup.py install
+
 ## Getting started
 
 You will first need to download the model files and word embeddings. The embedding files (utable and btable) are quite large (>2GB) so make sure there is enough space available. The encoder vocabulary can be found in dictionary.txt.
@@ -28,12 +32,14 @@ You will first need to download the model files and word embeddings. The embeddi
 
 NOTE to Toronto users: You should be able to run the code as is from any machine, without having to download.
 
-Once these are downloaded, open skipthoughts.py and set the paths to the above files (path_to_models and path_to_tables). Now you are ready to go. Make sure to set the THEANO_FLAGS device if you want to use CPU or GPU.
+Now you are ready to go. Make sure to set the THEANO_FLAGS device if you want to use CPU or GPU.
 
 Open up IPython and run the following:
 
+    path_to_models = '/path/to/models/'
+    path_to_tables = '/path/to/tables/'
     import skipthoughts
-    model = skipthoughts.load_model()
+    model = skipthoughts.load_model(path_to_models, path_to_tables)
 
 Now suppose you have a list of sentences X, where each entry is a string that you would like to encode. To get vectors, just run the following:
 
