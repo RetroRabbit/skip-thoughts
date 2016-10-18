@@ -7,12 +7,13 @@ To add a new layer:
 3) In the trainer function, replace 'encoder' or 'decoder' with your layer name
 
 """
+from __future__ import absolute_import
 import theano
 import theano.tensor as tensor
 
 import numpy
 
-from utils import _p, ortho_weight, norm_weight, tanh, linear
+from .utils import _p, ortho_weight, norm_weight, tanh, linear
 
 # layers: 'name': ('parameter initializer', 'feedforward')
 layers = {'ff': ('param_init_fflayer', 'fflayer'),

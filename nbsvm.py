@@ -1,12 +1,14 @@
 # Naive-Bayes features
 # Derived from https://github.com/mesnilgr/nbsvm
 
+from __future__ import absolute_import
 import os
 import pdb
 import numpy as np
 from collections import Counter
 from scipy.sparse import lil_matrix
 from scipy.sparse import csr_matrix
+from six.moves import range
 
 
 def tokenize(sentence, grams):
@@ -26,7 +28,7 @@ def build_dict(X, grams):
 
 
 def compute_ratio(poscounts, negcounts, alpha=1):
-    alltokens = list(set(poscounts.keys() + negcounts.keys()))
+    alltokens = list(set(list(poscounts.keys()) + list(negcounts.keys())))
     dic = dict((t, i) for i, t in enumerate(alltokens))
     d = len(dic)
     p, q = np.ones(d) * alpha , np.ones(d) * alpha

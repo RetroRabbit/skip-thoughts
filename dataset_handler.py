@@ -1,5 +1,7 @@
 # Dataset handler for binary classification tasks (MR, CR, SUBJ, MQPA)
 
+from __future__ import absolute_import
+from __future__ import print_function
 import numpy as np
 import skipthoughts
 from numpy.random import RandomState
@@ -23,7 +25,7 @@ def load_data(model, name, loc='./data/', seed=1234):
     text, labels = shuffle_data(pos+neg, labels, seed=seed)
     z['text'] = text
     z['labels'] = labels
-    print 'Computing skip-thought vectors...'
+    print('Computing skip-thought vectors...')
     features = skipthoughts.encode(model, text, verbose=False)
     return z, features
 

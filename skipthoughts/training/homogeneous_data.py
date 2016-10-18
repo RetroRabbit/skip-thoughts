@@ -1,5 +1,7 @@
+from __future__ import absolute_import
 import numpy
 import copy
+from six.moves import zip
 
 class HomogeneousData():
 

@@ -1,17 +1,20 @@
 """
 Helper functions for skip-thoughts
 """
+from __future__ import absolute_import
 import theano
 import theano.tensor as tensor
 import numpy
 
 from collections import OrderedDict
+import six
+from six.moves import range
 
 def zipp(params, tparams):
     """
     Push parameters to Theano shared variables
     """
-    for kk, vv in params.iteritems():
+    for kk, vv in six.iteritems(params):
         tparams[kk].set_value(vv)
 
 def unzip(zipped):
@@ -19,7 +22,7 @@ def unzip(zipped):
     Pull parameters from Theano shared variables
     """
     new_params = OrderedDict()
-    for kk, vv in zipped.iteritems():
+    for kk, vv in six.iteritems(zipped):
         new_params[kk] = vv.get_value()
     return new_params
 
@@ -28,7 +31,7 @@ def itemlist(tparams):
     Get the list of parameters. 
     Note that tparams must be OrderedDict
     """
-    return [vv for kk, vv in tparams.iteritems()]
+    return [vv for kk, vv in six.iteritems(tparams)]
 
 def _p(pp, name):
     """
@@ -41,7 +44,7 @@ def init_tparams(params):
     Initialize Theano shared variables according to the initial parameters
     """
     tparams = OrderedDict()
-    for kk, pp in params.iteritems():
+    for kk, pp in six.iteritems(params):
         tparams[kk] = theano.shared(params[kk], name=kk)
     return tparams
 
@@ -50,7 +53,7 @@ def load_params(path, params):
     Load parameters
     """
     pp = numpy.load(path)
-    for kk, vv in params.iteritems():
+    for kk, vv in six.iteritems(params):
         if kk not in pp:
             warnings.warn('%s is not in the archive'%kk)
             continue

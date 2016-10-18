@@ -1,6 +1,8 @@
+from __future__ import absolute_import
 import numpy
 import copy
 import sys
+from six.moves import zip
 
 #------------------------------------------------------------------------------
 sys.path.append('/u/rkiros/research/skipthoughts/')
