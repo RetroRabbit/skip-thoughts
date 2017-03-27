@@ -11,6 +11,8 @@ import numpy
 import copy
 import nltk
 
+import time
+
 from collections import OrderedDict, defaultdict
 from scipy.linalg import norm
 from nltk.tokenize import word_tokenize
@@ -79,6 +81,81 @@ def load_tables(path_to_tables):
     return utable, btable
 
 
+class Encoder:
+	def __init__(self,model):
+		self.model= model
+		before = time.time()
+
+		self.d = defaultdict(lambda : 0)
+		for w in model['utable'].keys():
+			self.d[w] = 1
+
+		after = time.time()
+		print("Encode setup time {} ".format(after- before))
+		
+	
+	def encode(self, X, use_norm=True, verbose=True, batch_size=128, use_eos=False):		
+		"""
+		Encode sentences in the list X. Each entry will return a vector
+		"""
+		# first, do preprocessing
+		X = preprocess(X)
+
+		# word dictionary and init
+		
+
+		ufeatures = numpy.zeros((len(X), self.model['uoptions']['dim']), dtype='float32')
+		bfeatures = numpy.zeros((len(X), 2 * self.model['boptions']['dim']), dtype='float32')
+
+		# length dictionary
+		ds = defaultdict(list)
+		captions = [s.split() for s in X]
+		for i,s in enumerate(captions):
+			ds[len(s)].append(i)
+
+		# Get features. This encodes by length, in order to avoid wasting computation
+		for k in ds.keys():
+			if verbose:
+			    print k
+			numbatches = len(ds[k]) / batch_size + 1
+			for minibatch in range(numbatches):
+			    caps = ds[k][minibatch::numbatches]
+
+			    if use_eos:
+				uembedding = numpy.zeros((k+1, len(caps), self.model['uoptions']['dim_word']), dtype='float32')
+				bembedding = numpy.zeros((k+1, len(caps), self.model['boptions']['dim_word']), dtype='float32')
+			    else:
+				uembedding = numpy.zeros((k, len(caps), self.model['uoptions']['dim_word']), dtype='float32')
+				bembedding = numpy.zeros((k, len(caps), self.model['boptions']['dim_word']), dtype='float32')
+			    for ind, c in enumerate(caps):
+				caption = captions[c]
+				for j in range(len(caption)):
+				    if self.d[caption[j]] > 0:
+					uembedding[j,ind] = self.model['utable'][caption[j]]
+					bembedding[j,ind] = self.model['btable'][caption[j]]
+				    else:
+					uembedding[j,ind] = self.model['utable']['UNK']
+					bembedding[j,ind] = self.model['btable']['UNK']
+				if use_eos:
+				    uembedding[-1,ind] = self.model['utable']['<eos>']
+				    bembedding[-1,ind] = self.model['btable']['<eos>']
+			    if use_eos:
+				uff = self.model['f_w2v'](uembedding, numpy.ones((len(caption)+1,len(caps)), dtype='float32'))
+				bff = self.model['f_w2v2'](bembedding, numpy.ones((len(caption)+1,len(caps)), dtype='float32'))
+			    else:
+				uff = self.model['f_w2v'](uembedding, numpy.ones((len(caption),len(caps)), dtype='float32'))
+				bff = self.model['f_w2v2'](bembedding, numpy.ones((len(caption),len(caps)), dtype='float32'))
+			    if use_norm:
+				for j in range(len(uff)):
+				    uff[j] /= norm(uff[j])
+				    bff[j] /= norm(bff[j])
+			    for ind, c in enumerate(caps):
+				ufeatures[c] = uff[ind]
+				bfeatures[c] = bff[ind]
+
+		features = numpy.c_[ufeatures, bfeatures]
+		return features
+
 def encode(model, X, use_norm=True, verbose=True, batch_size=128, use_eos=False):
     """
     Encode sentences in the list X. Each entry will return a vector
@@ -87,11 +164,17 @@ def encode(model, X, use_norm=True, verbose=True, batch_size=128, use_eos=False)
     X = preprocess(X)
 
     # word dictionary and init
+    before = time.time()
+
+
     d = defaultdict(lambda : 0)
     for w in model['utable'].keys():
-        d[w] = 1
+	d[w] = 1
     ufeatures = numpy.zeros((len(X), model['uoptions']['dim']), dtype='float32')
     bfeatures = numpy.zeros((len(X), 2 * model['boptions']['dim']), dtype='float32')
+
+    after = time.time()
+    print("Encode setup time {} ".format(after- before))
 
     # length dictionary
     ds = defaultdict(list)
